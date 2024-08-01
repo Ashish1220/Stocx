@@ -1,4 +1,7 @@
+import axios from 'axios';
 import { useState } from 'react';
+
+import { useMyContext } from 'src/sections/myProvider';
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -8,7 +11,7 @@ import { alpha } from '@mui/material/styles';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-
+import { useRouter } from 'src/routes/hooks';
 import { account } from 'src/_mock/account';
 
 // ----------------------------------------------------------------------
@@ -31,13 +34,36 @@ const MENU_OPTIONS = [
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
+  const router = useRouter();
+
   const [open, setOpen] = useState(null);
+  const {data, setData} = useMyContext();
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
+  const logout_user = () => {
+    axios.get('http://localhost:8000/logout', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      withCredentials: true
+    })
+      .then(response => {
+        // console.log(response.data);
+        setData({
+          name: "random_noob"
 
+        })
+        router.push('/login')
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+      
+  }
   const handleClose = () => {
+    
     setOpen(null);
   };
 
@@ -85,10 +111,10 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2 }}>
           <Typography variant="subtitle2" noWrap>
-            {account.displayName}
+            {data.displayName}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {account.email}
+            {data.email}
           </Typography>
         </Box>
 
@@ -105,7 +131,7 @@ export default function AccountPopover() {
         <MenuItem
           disableRipple
           disableTouchRipple
-          onClick={handleClose}
+          onClick={logout_user}
           sx={{ typography: 'body2', color: 'error.main', py: 1.5 }}
         >
           Logout

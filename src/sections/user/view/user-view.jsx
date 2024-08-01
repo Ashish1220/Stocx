@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
-import { users } from 'src/_mock/user';
+// import { users } from 'src/_mock/user';
 
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
@@ -21,17 +21,53 @@ import UserTableHead from '../user-table-head';
 import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
+import { useMyContext } from 'src/sections/myProvider';
 
 // ----------------------------------------------------------------------
-
 export default function UserPage() {
+  const {data,setData}=useMyContext();
+  const [users,setusers]=useState([]);
+  const new_users = data.expenditure_list.map((obj) => {
+    return {
+      ...obj, // Spread the existing properties
+      date: new Date(obj.date).toLocaleString('en-US', {
+         year: 'numeric', month: 'long', day: 'numeric'
+      }) // Convert the date string to a Date object
+    };
+  });
+  
+  const key_mapping = {
+    "description": "name",
+    "catagory": "company",
+    "date":"id",
+    "is_expense":"isVerified",
+}
+useState(()=>{
+  const updateKeys = (obj) => {
+    // console.log(typeof(obj.date))
+    return Object.keys(obj).reduce((acc, key) => {
+      const newKey = key_mapping[key] || key;
+      acc[newKey] = obj[key];
+      return acc;
+    }, {});
+  };
+  
+  // Use map to create a new array with updated keys
+  const updatedData = new_users.map(updateKeys);
+  // console.log(updatedData);
+  setusers(updatedData);
+
+},[])
+
+
+
   const [page, setPage] = useState(0);
 
-  const [order, setOrder] = useState('asc');
+  const [order, setOrder] = useState('desc');
 
   const [selected, setSelected] = useState([]);
 
-  const [orderBy, setOrderBy] = useState('name');
+  const [orderBy, setOrderBy] = useState('id');
 
   const [filterName, setFilterName] = useState('');
 
@@ -97,11 +133,9 @@ export default function UserPage() {
   return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">Users</Typography>
+        <Typography variant="h4">Transaction History</Typography>
 
-        <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
-          New User
-        </Button>
+        
       </Stack>
 
       <Card>
@@ -122,12 +156,14 @@ export default function UserPage() {
                 onRequestSort={handleSort}
                 onSelectAllClick={handleSelectAllClick}
                 headLabel={[
-                  { id: 'name', label: 'Name' },
-                  { id: 'company', label: 'Company' },
-                  { id: 'role', label: 'Role' },
-                  { id: 'isVerified', label: 'Verified', align: 'center' },
-                  { id: 'status', label: 'Status' },
-                  { id: '' },
+                  { id: 'name', label: 'Description' },
+                  { id: 'company', label: 'Category' },
+                  // { id: 'role', label: 'Role' },
+                  { id: 'date', label: 'Date'},
+                  {id: 'amount', label: 'Amount'},
+                  // { id: 'isVerified', label: 'Verified', align: 'center' },
+                  // { id: 'status', label: 'Status' },
+                  
                 ]}
               />
               <TableBody>
@@ -136,8 +172,10 @@ export default function UserPage() {
                   .map((row) => (
                     <UserTableRow
                       key={row.id}
+                      date={row.id}
                       name={row.name}
                       role={row.role}
+                      amount={row.amount}
                       status={row.status}
                       company={row.company}
                       avatarUrl={row.avatarUrl}

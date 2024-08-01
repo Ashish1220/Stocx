@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 
-import { LoginView } from 'src/sections/login';
+import { RegisterView } from 'src/sections/register';
 
 // ----------------------------------------------------------------------
 
@@ -8,10 +8,10 @@ export default function LoginPage() {
   return (
     <>
       <Helmet>
-        <title> Login </title>
+        <title> Register </title>
       </Helmet>
 
-      <LoginView />
+      <RegisterView />
     </>
   );
 }

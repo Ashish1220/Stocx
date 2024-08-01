@@ -18,13 +18,15 @@ import Iconify from 'src/components/iconify';
 
 export default function UserTableRow({
   selected,
+  date,
   name,
   avatarUrl,
   company,
-  role,
-  isVerified,
-  status,
+  // role,
+  // isVerified,
+  // status,
   handleClick,
+  amount
 }) {
   const [open, setOpen] = useState(null);
 
@@ -42,6 +44,7 @@ export default function UserTableRow({
         <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={handleClick} />
         </TableCell>
+        
 
         <TableCell component="th" scope="row" padding="none">
           <Stack direction="row" alignItems="center" spacing={2}>
@@ -53,20 +56,15 @@ export default function UserTableRow({
         </TableCell>
 
         <TableCell>{company}</TableCell>
+        <TableCell>{date}</TableCell>
+        <TableCell>{amount}</TableCell>
 
-        <TableCell>{role}</TableCell>
+        {/* <TableCell>{role}</TableCell> */}
 
-        <TableCell align="center">{isVerified ? 'Yes' : 'No'}</TableCell>
+        {/* <TableCell align="center">{isVerified ? 'Yes' : 'No'}</TableCell> */}
 
-        <TableCell>
-          <Label color={(status === 'banned' && 'error') || 'success'}>{status}</Label>
-        </TableCell>
 
-        <TableCell align="right">
-          <IconButton onClick={handleOpenMenu}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
-        </TableCell>
+      
       </TableRow>
 
       <Popover
@@ -97,9 +95,9 @@ UserTableRow.propTypes = {
   avatarUrl: PropTypes.any,
   company: PropTypes.any,
   handleClick: PropTypes.func,
-  isVerified: PropTypes.any,
+  // isVerified: PropTypes.any,
   name: PropTypes.any,
-  role: PropTypes.any,
+  // role: PropTypes.any,
   selected: PropTypes.any,
-  status: PropTypes.string,
+  // status: PropTypes.string,
 };

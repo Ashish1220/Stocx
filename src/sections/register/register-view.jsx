@@ -23,50 +23,72 @@ import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export default function LoginView() {
+export default function RegisterView() {
   const theme = useTheme();
-  const [email, setemail] = useState('');
-  const [pass, setpass] = useState('');
+  const [name, setName]=useState("");
+  const [funds_available, set_funds_available] = useState(0);
+  const [email,setemail]=useState("");
+  const [pass,setpass]=useState("");
   const router = useRouter();
-  const [error_l, seterror] = useState('');
+  const [error_l,seterror]=useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleClick = async () => {
-    const postData = { email: email, password: pass };
-    // console.log(postData)
-    axios
-      .post('http://localhost:8000/login', postData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        withCredentials: true,
-      })
-      .then((response) => {
-        // console.log(response.data)
-        if (response.data['status 200'] === 's') {
-          // console.log("woeking")
-          router.push('/');
-        }
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        seterror('Credentials are wrong');
-      });
+  const handleClick =async  () => {
+    // axios.post('http://localhost:8000/login', {"email":"test@gmail.com","password":"1234"}, {
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   withCredentials: true
+    //   })
+    //   .then(response => {
+    //     if(response.data['status 200']==='s'){
+    //       console.log("woeking")
+    //       router.push('/');
+    //     }
+        
+       
+    //           })
+    //   .catch(error => {
+    //     console.error('Error:', error);
+        
+    //   });
+    // router.push('/')
 
-      
+    
+    const postData = { "name": name, "email":email,"password":pass, "cf": Number(funds_available) }; 
+    // console.log(postData)
+    axios.post('http://localhost:8000/register', postData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      withCredentials: true
+      })
+      .then(response => {
+        // console.log(response.data)
+        if(response.data==='Registered'){
+          // console.log("working")
+          router.push('/login');
+        }
+        
+       
+              })
+      .catch(error => {
+        console.error('Error:', error);
+        seterror("Credentials are wrong")
+        
+      });
+    
   };
 
   const renderForm = (
     <>
       <Stack spacing={3}>
-        <TextField
-          name="email"
-          label="Email address"
-          onChange={(ev) => setemail(ev.target.value)}
-        />
+      <TextField name="name" label="Name"  onChange={(ev) => setName(ev.target.value)}/>
+
+        <TextField name="email" label="Email address"  onChange={(ev) => setemail(ev.target.value)}/>
 
         <TextField
-          onChange={(ev) => setpass(ev.target.value)}
+        onChange={(ev) => setpass(ev.target.value)}
           name="password"
           label="Password"
           type={showPassword ? 'text' : 'password'}
@@ -79,11 +101,14 @@ export default function LoginView() {
               </InputAdornment>
             ),
           }}
+          
         />
+        <TextField name="funds_available" label="Funds Available"  onChange={(ev) => set_funds_available(ev.target.value)}/>
+        
       </Stack>
-      <div>
-        <p>{error_l}</p>
-      </div>
+          <div>
+          <p>{error_l}</p>
+          </div>
       <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ my: 3 }}>
         <Link variant="subtitle2" underline="hover">
           Forgot password?
@@ -98,7 +123,7 @@ export default function LoginView() {
         color="inherit"
         onClick={handleClick}
       >
-        Login
+        Register
       </LoadingButton>
     </>
   );
@@ -129,14 +154,8 @@ export default function LoginView() {
             maxWidth: 420,
           }}
         >
-          <Typography variant="h4">Sign in to Stocx</Typography>
+          <Typography variant="h4">Get started with Stocx</Typography>
 
-          <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
-            Don’t have an account?
-            <Link variant="subtitle2" sx={{ ml: 0.5 }}>
-              <a href="/register">Get started</a>
-            </Link>
-          </Typography>
 
           <Stack direction="row" spacing={2}>
             <Button
